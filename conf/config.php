@@ -26,13 +26,13 @@
 	$schedule_rand = 10;			// rand for schedulers start, +0..X seconds
 
 	$do_diagnostic = true;
-	$log_file = '/tmp/errors.log';		// path to log file (comment or leave blank to disable logging)
+	//$log_file = '/tmp/errors.log';		// path to log file (comment or leave blank to disable logging)
 
 	$saveUploadedTorrents = true;		// Save uploaded torrents to profile/torrents directory or not
 	$overwriteUploadedTorrents = false;     // Overwrite existing uploaded torrents in profile/torrents directory or make unique name
 
 	$topDirectory = '/';			// Upper available directory. Absolute path with trail slash.
-	$forbidUserSettings = false;
+	$forbidUserSettings = true;
 
 	$scgi_port = 5000;
 	$scgi_host = "127.0.0.1";
@@ -49,9 +49,9 @@
 	$pathToExternals = array(
 		"php" 	=> '',			// Something like /usr/bin/php. If empty, will be found in PATH.
 		"curl"	=> '',			// Something like /usr/bin/curl. If empty, will be found in PATH.
-		"gzip"	=> '',			// Something like /usr/bin/gzip. If empty, will be found in PATH.
+		"gzip"	=> '/bin/gzip',			// Something like /usr/bin/gzip. If empty, will be found in PATH.
 		"id"	=> '',			// Something like /usr/bin/id. If empty, will be found in PATH.
-		"stat"	=> '',			// Something like /usr/bin/stat. If empty, will be found in PATH.
+		"stat"	=> '/usr/bin/stat',			// Something like /usr/bin/stat. If empty, will be found in PATH.
 	);
 
 	$localhosts = array( 			// list of local interfaces
@@ -60,7 +60,7 @@
 	);
 
 	$profilePath = '../share';		// Path to user profiles
-	$profileMask = 0777;			// Mask for files and directory creation in user profiles.
+	$profileMask = 0775;			// Mask for files and directory creation in user profiles.
 						// Both Webserver and rtorrent users must have read-write access to it.
 						// For example, if Webserver and rtorrent users are in the same group then the value may be 0770.
 
