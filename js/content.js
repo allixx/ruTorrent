@@ -3,6 +3,11 @@
  *
  */
 
+var label = {
+	selected: 0,
+	count: 0
+}
+
 function makeContent()
 {
 	$(".cat").mouseclick(theWebUI.labelContextMenu);
@@ -104,20 +109,49 @@ function makeContent()
 				'<label>&nbsp;</label><input type="checkbox" name="randomize_hash" id="randomize_hash"/>'+theUILang.doRandomizeHash+'<br/>'+
 				'</span>'+
 				'<label>'+theUILang.Label+':</label><input type="text" id="tadd_label" name="tadd_label" class="TextboxLarge" /><select id="tadd_label_select"></select><br/>'+
-				'<hr/>'+
+				'<hr style="margin: 1em"/>'+
 				'<label>'+theUILang.Torrent_file+':</label><input type="file" multiple="multiple" name="torrent_file[]" id="torrent_file" accept=".torrent" class="TextboxLarge"/><br/>'+
 				'<label>&nbsp;</label><input type="submit" value="'+theUILang.add_button+'" id="add_button" class="Button" /><br/>'+
 			'</form>'+
-			'<hr/>'+
+			'<hr style="margin: 1em"/>'+
 			'<form action="addtorrent.php" id="addtorrenturl" method="post" target="uploadfrmurl">'+
 				'<label>'+theUILang.Torrent_URL+':</label><input type="text" id="url" name="url" class="TextboxLarge"/><br/>'+
 				'<label>&nbsp;</label><input type="submit" id="add_url" value="'+theUILang.add_url+'" class="Button" disabled="true"/>'+
 			'</form>'+
+			'<div class="cont fxcaret">'+
+				'<hr style="margin: 1em"/>'+
+				'<input type="button" value="pth" id="pth"><input type="button" value="pth_u" id="pth_up">|'+
+				'<input type="button" value="nw" id="nw"><input type="button" value="nw_u" id="nw_up">|'+
+				'<input type="button" value="pub" id="public"><input type="button" value="tv" id="TV">'+
+				'<input type="button" value="movies" id="Movies"><input type="button" value="misc" id="Misc">'+
+			'</div>'+
 		'</div>');
+
+	// shortcuts
+// BEGIN STORAGE ANSIBLE MANAGED BLOCK
+	$storage = "/path/to/storage";
+// END STORAGE ANSIBLE MANAGED BLOCK
+	$("#pth, #pth_up, #nw, #nw_up").click(function() {
+		$('#dir_edit').val($storage+"/_"+this.id+"/");
+		$('#fast_resume').prop('checked', true);
+		$('#tadd_label_select').val(this.id);
+		$("#tadd_label_select").trigger('change');
+	});
+	$("#public, #TV, #Movies, #Misc").click(function() {
+		$('#dir_edit').val($storage+"/_"+this.id+"/");
+		$('#fast_resume').prop('checked', true);
+		$('#tadd_label_select').val('public');
+		$("#tadd_label_select").trigger('change');
+	});
 
 	$("#tadd_label_select").change( function(e)
 	{
 		var index = this.selectedIndex;
+
+		// remember label selection and count
+		label.selected = index;
+		label.count = $("#tadd_label_select option").length;
+
 		switch (index)
 		{
 			case 1:
@@ -147,12 +181,17 @@ function makeContent()
 		for (var lbl in theWebUI.cLabels)
 			$("#tadd_label_select").append("<option>"+lbl+"</option>");
 		$("#add_button").prop("disabled",false);
+		// restore previously selected label
+		if ($("#tadd_label_select option").length == label.count && label.selected != 1 ) {
+			$("#tadd_label_select option").eq(label.selected).attr('selected', 'selected');
+		}
 		$("#tadd_label_select").change();
 	});
 
 	var input = $$('url');
 	input.onupdate = input.onkeyup = function() { $('#add_url').prop('disabled',$.trim(input.value)==''); };
-	input.onpaste = function() { setTimeout( input.onupdate, 10 ) };
+	// increase timeout 10 -> 100
+	input.onpaste = function() { setTimeout( input.onupdate, 100 ) };
 	var makeAddRequest = function(frm)
 	{
 		var s = theURLs.AddTorrentURL;
