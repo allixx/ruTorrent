@@ -338,6 +338,8 @@ var theWebUI =
 		this.assignEvents();
 		this.resize();
 		this.update();		
+		// switch to No Label torrents filter
+		theWebUI.switchLabel($$("-_-_-nlb-_-_-"));
 	},
 
 	config: function(data)
